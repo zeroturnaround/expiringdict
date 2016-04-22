@@ -97,9 +97,8 @@ def test_ttl():
     eq_(None, d.ttl('b'))
 
     # expired key
-    with patch.object(OrderedDict, '__getitem__',
-                      Mock(return_value=('x', 10**9))):
-        eq_(None, d.ttl('a'))
+    OrderedDict.__setitem__(d, 'a', ('x', 10 ** 9))
+    eq_(None, d.ttl('a'))
 
 
 def test_setdefault():

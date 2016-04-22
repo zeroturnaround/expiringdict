@@ -68,9 +68,13 @@ class ExpiringDict(OrderedDict):
     def __setitem__(self, key, value):
         """ Set d[key] to value. """
         with self.lock:
-            if len(self) == self.max_len:
-                self.popitem(last=False)
             OrderedDict.__setitem__(self, key, (value, time.time()))
+            if len(self) > self.max_len:
+                del self[next(OrderedDict.__iter__(self))]
+
+    def __iter__(self):
+        for key in list(OrderedDict.__iter__(self)):
+            yield key
 
     def pop(self, key, default=None):
         """ Get item from the dict and remove it.
